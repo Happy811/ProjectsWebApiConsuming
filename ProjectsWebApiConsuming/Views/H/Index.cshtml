@@ -1,0 +1,199 @@
+﻿
+<html>
+<head>
+    <style>
+        
+
+        body {
+            background-color:burlywood;
+        }
+        table {
+              border-collapse: collapse;
+              width: 100%;
+            }
+
+            th, td {
+              padding: 8px;
+              text-align: left;
+              border-bottom: 1px solid #ddd;
+            }
+
+            .myButton {
+	box-shadow: 0px 1px 0px 0px #f0f7fa;
+	background:linear-gradient(to bottom, #33bdef 5%, #019ad2 100%);
+	background-color:#33bdef;
+	border-radius:6px;
+	border:1px solid #057fd0;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px -1px 0px #5b6178;
+}
+.myButton:hover {
+	background:linear-gradient(to bottom, #019ad2 5%, #33bdef 100%);
+	background-color:#019ad2;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
+}
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script>
+        function getProjects() {
+
+            $("#tab1").css("display", "none");
+            $.getJSON("/api/Projects/", function (data) {
+                $("#tab1").css("display", "block");
+                $.each(data, function (key, val) {
+                    $("<tr><td>" + val.id + "</td><td>" + val.title + "</td><td>" + val.startingDate + "</td><td>" + val.endingDate + "</td><td>" + val.budget + "</td></tr>").appendTo($("#tab1"));
+                })
+            })
+
+        }
+        $(document).ready(function () {
+
+            getProjects();
+
+
+
+            //POST
+            $("#btn1").click(function () {
+                var tle = $("#title").val();
+                var sdate = $("#sdate").val();
+                var edate = $("#edate").val();
+                var budg = $("#budget").val();
+                $.ajax({
+
+                    type: "POST",
+
+                    contentType: "application/json;charset=utf-8",
+
+                    url: "/api/Projects/",
+
+                    data: JSON.stringify({
+
+
+
+                        title: tle,
+
+                        startingDate: sdate,
+                        endingDate: edate,
+                        budget: budg
+
+
+                    }),
+
+                    dataType: "JSON",
+
+                    success: function (data) {
+                        getProjects();
+                        location.reload(true);
+                    }
+                });
+
+
+            })
+            //Delete
+            $("#btn2").click(function () {
+                var id = $("#id").val();
+
+                $.ajax({
+
+                    type: "DELETE",
+
+                    contentType: "application/json;charset=utf-8",
+
+                    url: "/api/Projects/" + $("#id").val(),
+
+                    data: JSON.stringify({
+
+                        id: $("#id").val(),
+
+                    }),
+
+                    dataType: "JSON",
+
+                    success: function (data) {
+                        getProjects();
+                        location.reload(true);
+
+                    }
+                });
+
+            })
+
+            //Update
+            $("#btn3").click(function () {
+                var i = $("#id").val();
+                var tle = $("#title").val();
+                var sdate = $("#sdate").val();
+                var edate = $("#edate").val();
+                var budg = $("#budget").val();
+                $.ajax({
+
+                    type: "PUT",
+
+                    contentType: "application/json;charset=utf-8",
+
+                    url: "/api/Projects/" + $("#id").val(),
+
+                    data: JSON.stringify({
+
+
+                        id: i,
+                        title: tle,
+                        startingDate: sdate,
+                        endingDate: edate,
+                        budget: budg
+                    }),
+
+                    dataType: "JSON",
+
+                    success: function (data) {
+                        getProjects();
+                        location.reload(true);
+
+
+
+                    }
+                });
+
+
+            })
+        });
+
+
+    </script>
+</head>
+<body>
+    <h2>Managing Projects</h2>
+
+    <table id="tab1">
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Starting Date</th>
+            <th>Ending Date</th>
+            <th>Budget</th>
+        </tr>
+    </table>
+
+    ID: <input type="text" name="id" id="id" value="" /><br />
+    Project Title : <input type="text" name="title" id="title" value="" /><br />
+    Starting Date: <input type="date" name="sdate" id="sdate" value="" /><br />
+    Ending Date: <input type="date" name="edate" id="edate" value="" /><br />
+    Budget: <input type="number" name="budget" id="budget" value="" /><br />
+
+    <input class="myButton" type="button" name="btn" id="btn1" value="Add" />
+    <input class="myButton" type="button" name="btn2" id="btn2" value="Delete" />
+    <input class="myButton" type="button" name="btn3" id="btn3" value="Update" />
+</body>
+</html>
+
